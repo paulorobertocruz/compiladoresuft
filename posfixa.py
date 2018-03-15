@@ -106,11 +106,15 @@ def expressao_lista_opera(expressao):
                 ex_op = Opera(".", tipo=OPERADOR)
 
             # *.a
-            elif expressao[0] == "*" and expressao[1] not in operadores:
-                ex_op = Opera(".", tipo=OPERADOR)
+            #elif expressao[0] == "*" and expressao[1] not in operadores:
+            #   ex_op = Opera(".", tipo=OPERADOR)
 
             # *.(
             elif expressao[0] == "*" and expressao[1] == "(":
+                ex_op = Opera(".", tipo=OPERADOR)
+
+            # ).*
+            elif expressao[0] == ")" and expressao[1] == "*":
                 ex_op = Opera(".", tipo=OPERADOR)
 
 
@@ -142,6 +146,7 @@ def expressao_lista_opera(expressao):
 def infixa_posfixa(entrada):
 
     expressao = expressao_lista_opera(entrada)
+    print(expressao)
     posfixa = ""
 
     pilha = list()
@@ -168,6 +173,7 @@ def infixa_posfixa(entrada):
                 pilha.append(atual)
         else:
             posfixa += atual.str
+        print(pilha)
 
     while len(pilha) > 0:
         posfixa += pilha.pop().str
@@ -175,10 +181,10 @@ def infixa_posfixa(entrada):
     return posfixa
 
 
-aaa = "\\++b(ab)"
+aaa = "(a+b)*c"
+print(aaa)
 r = infixa_posfixa(aaa)
 
-print(aaa)
 print(r)
 
 
