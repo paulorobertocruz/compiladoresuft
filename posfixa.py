@@ -106,15 +106,11 @@ def expressao_lista_opera(expressao):
                 ex_op = Opera(".", tipo=OPERADOR)
 
             # *.a
-            #elif expressao[0] == "*" and expressao[1] not in operadores:
-            #   ex_op = Opera(".", tipo=OPERADOR)
+            elif expressao[0] == "*" and expressao[1] not in operadores:
+               ex_op = Opera(".", tipo=OPERADOR)
 
             # *.(
             elif expressao[0] == "*" and expressao[1] == "(":
-                ex_op = Opera(".", tipo=OPERADOR)
-
-            # ).*
-            elif expressao[0] == ")" and expressao[1] == "*":
                 ex_op = Opera(".", tipo=OPERADOR)
 
 
@@ -181,10 +177,9 @@ def infixa_posfixa(entrada):
     return posfixa
 
 
-aaa = "(a+b)*c"
+aaa = "(0+(1(01*(00)*0)*1)*)*"
 print(aaa)
 r = infixa_posfixa(aaa)
-
 print(r)
 
 
