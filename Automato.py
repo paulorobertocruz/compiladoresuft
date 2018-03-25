@@ -73,21 +73,16 @@ class Automato():
             return False
 
 #defini base
-Base = Automato()
-Base.add_estado() #q1
-Base.set_inicial(0)
-Base.add_estado() #q2
-Base.set_final_automato(1)
-Base.add_transicao(0, "&", 1)
-Base.add_transicao(0, "a", 1)
-Base.add_transicao(0, "b", 1)
-
-def unicao(automado_a, automado_b):
-    pass
-
-def concatenacao(automato_a, automato_b):
-    pass
+def get_base(simbolo):
+    AutomatoBase = Automato()
+    AutomatoBase.add_estado() #q1
+    AutomatoBase.set_inicial(0)
+    AutomatoBase.add_estado() #q2
+    AutomatoBase.set_final_automato(1)
+    AutomatoBase.add_transicao(0, simbolo, 1)
+    return AutomatoBase
 
 if __name__ == "__main__":
-    print(Base)
-    print(Base.alfabeto)
+    AutomatoBase = get_base("a")
+    print(AutomatoBase)
+    print(AutomatoBase.alfabeto)

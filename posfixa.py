@@ -169,7 +169,6 @@ def infixa_posfixa(entrada):
                 pilha.append(atual)
         else:
             posfixa += atual.str
-        print(pilha)
 
     while len(pilha) > 0:
         posfixa += pilha.pop().str
