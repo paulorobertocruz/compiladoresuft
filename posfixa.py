@@ -177,10 +177,11 @@ def infixa_posfixa(entrada):
     return posfixa
 
 
-aaa = "(0+(1(01*(00)*0)*1)*)*"
-print(aaa)
-r = infixa_posfixa(aaa)
-print(r)
+if __name__ == "__main__":
+    aaa = "(0+(1(01*(00)*0)*1)*)*"
+    print(aaa)
+    r = infixa_posfixa(aaa)
+    print(r)
 
 
 
