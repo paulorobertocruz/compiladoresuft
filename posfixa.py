@@ -33,7 +33,10 @@ class Opera(object):
 
 
 class Expressao(object):
-    lista = []
+    lista = None
+
+    def __init__(self):
+        self.lista = list()
 
     def add(self, opera):
         self.lista.append(opera)
@@ -142,7 +145,6 @@ def expressao_lista_opera(expressao):
 def infixa_posfixa(entrada):
 
     expressao = expressao_lista_opera(entrada)
-    print(expressao)
     posfixa = ""
 
     pilha = list()
@@ -173,12 +175,16 @@ def infixa_posfixa(entrada):
     while len(pilha) > 0:
         posfixa += pilha.pop().str
 
-    return posfixa
+    return str(posfixa)
 
 
 if __name__ == "__main__":
     aaa = "(0+(1(01*(00)*0)*1)*)*"
     print(aaa)
+    r = infixa_posfixa(aaa)
+    print(r)
+    r = infixa_posfixa(aaa)
+    print(r)
     r = infixa_posfixa(aaa)
     print(r)
 
