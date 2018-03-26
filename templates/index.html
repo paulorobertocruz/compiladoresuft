@@ -38,7 +38,9 @@
                 
                 {% for estado in afd.estados %}
                 <tr>
-                    <td>q{{estado}} {% if afd.estados[estado]["final"] %}*{% endif %}</td>
+                    <td>
+                        q{{estado}} {% if afd.estados[estado]["final"] %}*{% endif %}
+                    </td>
                 {% for s in afd.alfabeto %}
                     <td>q{{afd.estados[estado][s]}}</td>
                 {% endfor %}

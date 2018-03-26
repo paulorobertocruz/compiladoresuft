@@ -32,6 +32,9 @@ class Automato(object):
     def __len__(self):
         return len(self.estados)
 
+    def set_alfabeto(self, alfa):
+        self.alfabeto = alfa
+
     def add_estado(self, numero = None, opcoes = {}):
     
         if "inicial" not in opcoes:
@@ -56,7 +59,9 @@ class Automato(object):
         novas_opcoes = {}
         for opt in self.estados[estado]:
             if opt not in ["final", "inicial"]:
-                novas_opcoes[opt] = int(self.estados[estado][opt] + offset)
+                novas_opcoes[opt] = list()
+                for q in self.estados[estado][opt]:
+                    novas_opcoes[opt].append(q + offset)
         
         novas_opcoes["inicial"] = self.estados[estado]["inicial"]
         novas_opcoes["final"] = self.estados[estado]["final"]
@@ -64,12 +69,20 @@ class Automato(object):
 
     
     def add_transicao(self, estado_entrada, simbolo, estado_saida):
-
-        if simbolo not in self.alfabeto:
-            self.alfabeto.append(simbolo)
-
         if estado_entrada in self.estados and estado_saida in self.estados:
-            self.estados[estado_entrada][simbolo] = estado_saida
+            #se não é uma lista instancia uma lista    
+            if simbolo not in self.estados[estado_entrada]:
+                self.estados[estado_entrada][simbolo] = list()
+            
+            if not isinstance(self.estados[estado_entrada][simbolo], list):
+                self.estados[estado_entrada][simbolo] = list()
+        
+            # se não está nos destinos possiveis adiciona
+            if estado_saida not in self.estados[estado_entrada][simbolo]:    
+                self.estados[estado_entrada][simbolo].append(estado_saida)
+            
+            if simbolo not in self.alfabeto:
+                self.alfabeto.append(simbolo)
             return True
         else:
             return False

@@ -2,11 +2,23 @@ from posfixa import OPERADORES
 from Automato import get_base
 from Automato import Automato
 
+def une_alfabetos(a, b):
+    novo_alfabeto = list()
+    for i in a:
+        novo_alfabeto.append(i)
+    for i in b:
+        novo_alfabeto.append(i)
+    
+    return novo_alfabeto
+
 def unicao(automato_a, automato_b):
     automato = Automato()
-    automato.add_estado()
-    automato.set_inicial(0)
+    estado_inicial = automato.add_estado()
+    automato.set_inicial(estado_inicial)
     
+    #une os alfabetos
+    automato.set_alfabeto(une_alfabetos(automato_a.alfabeto, automato_b.alfabeto))
+
     numero_estados = 1
     
     for estado in list(automato_a.estados):
@@ -42,7 +54,9 @@ def unicao(automato_a, automato_b):
 
 
 def concatenacao(automato_a, automato_b):
-    
+    #une os alfabetos
+    automato_a.set_alfabeto(une_alfabetos(automato_a.alfabeto, automato_b.alfabeto))
+
     offset_estados = len(automato_a)
 
     for estado in list(automato_b.estados):
@@ -50,7 +64,7 @@ def concatenacao(automato_a, automato_b):
         novo_estado = automato_a.add_estado(estado + offset_estados, opcoes=novas_opcoes)
 
         if novas_opcoes["inicial"]:
-            automato_a.add_estado(automato_a.estado_final, "&", novo_estado)
+            automato_a.add_transicao(automato_a.estado_final, "&", novo_estado)
             automato_a.set_inicial(novo_estado, inicial=False)
         
         if novas_opcoes["final"]:
@@ -133,7 +147,7 @@ def ken_thompson(expressao_posfixa):
 
 if __name__ == "__main__":
     from posfixa import infixa_posfixa
-    posfixa = infixa_posfixa("a+ba*")
-    print(posfixa)
+    posfixa = infixa_posfixa("ab")
+    print("posfixa: ",posfixa)
     afd = ken_thompson(posfixa)
     print(afd)
