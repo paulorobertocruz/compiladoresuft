@@ -1,8 +1,9 @@
-class Automato():
+class Automato(object):
     alfabeto = []
     estados = {}
     estado_inicial = None
     estado_final = None
+    estados_finais = []
 
     def __init__(self):
         pass
@@ -18,6 +19,9 @@ class Automato():
             return_str += "\n"
 
         return return_str
+    
+    def __len__(self):
+        return len(self.estados)
 
     def add_estado(self, numero = None, opcoes = {}):
     
@@ -36,6 +40,19 @@ class Automato():
 
         if self.estados[numero]["inicial"]:
             self.set_inicial(numero)
+        
+        return numero
+    
+    def get_estado_offset(self, estado, offset):
+        novas_opcoes = {}
+        for opt in self.estados[estado]:
+            if opt not in ["final", "inicial"]:
+                novas_opcoes[opt] = self.estados[estado][opt] + offset
+        
+        novas_opcoes["inicial"] = self.estados[estado]["inicial"]
+        novas_opcoes["final"] = self.estados[estado]["final"]
+        return novas_opcoes
+
     
     def add_transicao(self, estado_entrada, simbolo, estado_saida):
 
@@ -48,23 +65,36 @@ class Automato():
         else:
             return False
 
-    def set_inicial(self, estado):
+    def set_inicial(self, estado, inicial = True):
         if estado in self.estados:
+            
+            if not inicial:
+                self.estados[estado]["inicial"] = False
+                return True
+
             if self.estado_inicial is not None: 
                 self.estados[self.estado_inicial]["inicial"] = False
+            
             self.estado_inicial = estado
             self.estados[estado]["inicial"] = True
             return True
         else:
             return False
     
-    def set_final(self, estado):
+    def set_final(self, estado, final = True):
         if estado in self.estados:
+            if not final:
+                for estado_final in self.estados_finais:
+                    if estado == estado_final:
+                        del self.estados_finais[estado] 
+                self.estados[estado]["final"] = False
+                return True
+            
+            self.estados_finais.append(estado)
             self.estados[estado]["final"] = True
             return True
         else:
             return False
-
 
     def set_final_automato(self, estado):
         if self.set_final(estado):
