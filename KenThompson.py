@@ -4,10 +4,13 @@ from Automato import Automato
 
 def une_alfabetos(a, b):
     novo_alfabeto = list()
+
     for i in a:
         novo_alfabeto.append(i)
+
     for i in b:
-        novo_alfabeto.append(i)
+        if i not in novo_alfabeto:
+            novo_alfabeto.append(i)
     
     return novo_alfabeto
 
@@ -72,15 +75,17 @@ def concatenacao(automato_a, automato_b):
         if novas_opcoes["final"]:
             automato_a.set_final(automato_a.estado_final, final=False)
             automato_a.set_final_automato(novo_estado)
+        
     automato_a.set_inicial(estado_inicial)
     return automato_a
 
 def fecho_kleene(automato):
 
     novo_automato = Automato()
-    novo_automato.add_estado()
+    estado_inicial = novo_automato.add_estado()
     novo_automato.set_inicial(0)
-    
+    novo_automato.alfabeto = automato.alfabeto
+
     offset_estados = 1
     final_velho = None
     inicial_velho = None
@@ -97,7 +102,7 @@ def fecho_kleene(automato):
             final_velho = novo_estado
             novo_automato.set_final(novo_estado, final=False)
     
-    novo_automato.add_transicao(novo_automato.estado_inicial, "&", inicial_velho)
+    novo_automato.add_transicao(estado_inicial, "&", inicial_velho)
 
     novo_automato.add_transicao(final_velho, "&", inicial_velho)
 
@@ -108,7 +113,7 @@ def fecho_kleene(automato):
 
     novo_automato.add_transicao(final_velho, "&", final_novo)
 
-    novo_automato.add_transicao(novo_automato.estado_inicial, "&", final_novo)
+    novo_automato.add_transicao(estado_inicial, "&", final_novo)
     
     return novo_automato
 

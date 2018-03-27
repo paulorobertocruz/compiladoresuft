@@ -70,6 +70,7 @@ class Automato(object):
     
     def add_transicao(self, estado_entrada, simbolo, estado_saida):
         if estado_entrada in self.estados and estado_saida in self.estados:
+            
             #se não é uma lista instancia uma lista    
             if simbolo not in self.estados[estado_entrada]:
                 self.estados[estado_entrada][simbolo] = list()
