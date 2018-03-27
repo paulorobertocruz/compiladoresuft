@@ -74,9 +74,6 @@ class Automato(object):
             if simbolo not in self.estados[estado_entrada]:
                 self.estados[estado_entrada][simbolo] = list()
             
-            if not isinstance(self.estados[estado_entrada][simbolo], list):
-                self.estados[estado_entrada][simbolo] = list()
-        
             # se não está nos destinos possiveis adiciona
             if estado_saida not in self.estados[estado_entrada][simbolo]:    
                 self.estados[estado_entrada][simbolo].append(estado_saida)
