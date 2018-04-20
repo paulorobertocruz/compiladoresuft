@@ -1,12 +1,37 @@
+
+class SimboloNotExist(Exception):
+    pass
+
+class EstadoNotExist(Exception):
+    pass
+
+def nome_de_estado_lista(lista):
+    nome = ""
+    for i in lista:
+        nome += "{0}".format(i)
+    return nome
+
+def is_novo(dicinario):
+    novo = False
+    for k in dicinario:
+        if "novo" in dicinario[k]:
+            if dicinario[k]["novo"] == True:
+                novo = True
+    
+    return novo
+
 class Automato(object):
     alfabeto = None
     estados = None
     estado_inicial = None
     estado_final = None
 
+    fechos = None
+
     def __init__(self):
         self.alfabeto = list()
         self.estados = dict()
+        self.fechos = dict()
     
     def __repr__(self):
         return self.alfabeto.__repr__()
@@ -84,6 +109,16 @@ class Automato(object):
             return True
         else:
             return False
+    
+    def transicao_afn(self, estado, simbolo):
+    
+        if estado in self.estados:
+            if simbolo in self.estados[estado]:
+                return self.estados[estado][simbolo]
+            else:
+                raise SimboloNotExist
+        else:
+            raise EstadoNotExist
 
     def set_inicial(self, estado, inicial = True):
         if estado in self.estados:
@@ -123,6 +158,90 @@ class Automato(object):
             if self.estados[estado]["final"]:
                 finais.append(estado)
         return finais
+    
+    def reset_fechos(self):
+        self.fechos = {}
+
+    def fecho_e(self, estado):
+        
+        fecho = list()
+
+        if estado not in self.fechos:
+            
+            fecho.append(estado)
+            
+            try:
+                transi_e = self.transicao_afn(estado, "&")
+            except SimboloNotExist:
+                transi_e = []
+            
+            for t in transi_e:
+                print("estado", t)
+                t_fechos = self.fecho_e(t)
+                print("tfecho", t_fechos)
+                for f in t_fechos:
+                    if f not in fecho:
+                        fecho.append(f)
+            
+            fecho.sort()
+            self.fechos[estado] = fecho
+
+        return self.fechos[estado]
+    
+    def afd_from_afn(self):
+        
+        novo_automato = dict()
+        lista_nome_estados = dict()
+        lista_estados = list()
+
+        fecho_e_inicial = self.fecho_e(self.estado_inicial)
+        lista_estados.append(fecho_e_inicial)
+        nome_fecho_e_inicial = nome_de_estado_lista(fecho_e_inicial)
+        lista_nome_estados[nome_fecho_e_inicial] = len(lista_estados) - 1
+        
+        while(len(lista_estados) > 0):
+            
+            estado_atual = lista_estados.pop(0)
+
+            nome_estado_atual = nome_de_estado_lista(estado_atual)
+            lista_nome_estados.pop(nome_estado_atual)
+
+            novo_estado = {}
+
+            for simbolo in self.alfabeto:
+                if simbolo == "&":
+                    continue
+                
+                conjunto_estados = list()
+                for estado in estado_atual:
+                    try:
+                        transi_e = self.transicao_afn(estado, simbolo)
+                    except SimboloNotExist:
+                        transi_e = []
+                    except EstadoNotExist:
+                        transi_e = []
+                    for e in transi_e:
+                        if e not in conjunto_estados:
+                            e_fecho_e = self.fecho_e(e)
+                            for ef in e_fecho_e:
+                                conjunto_estados.append(ef)
+                
+                conjunto_estados.sort()
+                if conjunto_estados == []:
+                    conjunto_estados.append("$")
+                
+                novo_estado[simbolo] = conjunto_estados
+                
+                nome_conjunto_estados = nome_de_estado_lista(conjunto_estados)
+
+                if nome_conjunto_estados not in lista_nome_estados and nome_conjunto_estados not in novo_automato:
+                    lista_estados.append(conjunto_estados)
+                    lista_nome_estados[nome_conjunto_estados] = len(lista_estados) - 1
+            
+            novo_automato[nome_estado_atual] = novo_estado
+
+        return novo_automato
+        
 
 #defini base
 def get_base(simbolo = "&"):

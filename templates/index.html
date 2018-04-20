@@ -25,30 +25,43 @@
             </form>            
         </div>
 
-        {% if afd %}
-        <div class="afd">
+        {% if afn %}
+        <div class="afn">
             <table border="1">
                 <tr>
                     <th> q </th>
-                    {% for s in afd.alfabeto %}
+                    {% for s in afn.alfabeto %}
                         <th>{{s}}</th>
                     {% endfor %}
                 </tr>
                 
                 
-                {% for estado in afd.estados %}
+                {% for estado in afn.estados %}
                 <tr>
                     <td>
-                        q{{estado}} {% if afd.estados[estado]["final"] %}*{% endif %}
+                        q{{estado}} {% if afn.estados[estado]["final"] %}*{% endif %}
                     </td>
-                {% for s in afd.alfabeto %}
-                    <td>q{{afd.estados[estado][s]}}</td>
+                {% for s in afn.alfabeto %}
+                    <td>
+                        {% if afn.estados[estado][s] %}
+                            q{{afn.estados[estado][s]}}
+                        {% endif %}
+                    </td>
                 {% endfor %}
                 </tr>
                 {% endfor %}
                 
             </table>
             
+        </div>
+        {% endif %}
+
+
+        {% if afd %}
+        <div class="afd">
+            {% for estado in afd %}
+                <p>{{estado}} - {{afd[estado]}}</p>
+            {% endfor %}
         </div>
         {% endif %}
     </div>
