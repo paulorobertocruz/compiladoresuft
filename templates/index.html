@@ -39,7 +39,7 @@
                 {% for estado in afn.estados %}
                 <tr>
                     <td>
-                        q{{estado}} {% if afn.estados[estado]["final"] %}*{% endif %}
+                        {% if afn.estados[estado]["inicial"] %}>{% endif %} q{{estado}} {% if afn.estados[estado]["final"] %}*{% endif %}
                     </td>
                 {% for s in afn.alfabeto %}
                     <td>
@@ -59,9 +59,33 @@
 
         {% if afd %}
         <div class="afd">
-            {% for estado in afd %}
-                <p>{{estado}} - {{afd[estado]}}</p>
-            {% endfor %}
+
+            <table border="1">
+                <tr>
+                    <th> q </th>
+                    {% for s in afd.alfabeto %}
+                        <th>{{s}}</th>
+                    {% endfor %}
+                </tr>
+                
+                
+                {% for estado in afd.automato %}
+                <tr>
+                    <td>
+                        {% if estado[1]["inicial"] %}>{% endif %} q{{estado[0]}} {% if estado[1]["final"] %}*{% endif %}
+                    </td>
+                {% for s in afd.alfabeto %}
+                    <td>
+                        {% if estado[1][s] %}
+                            q{{estado[1][s]}}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+                </tr>
+                {% endfor %}
+                
+            </table>
+
         </div>
         {% endif %}
     </div>

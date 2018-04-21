@@ -210,6 +210,13 @@ class Automato(object):
             novo_estado["inicial"] = False
             novo_estado["final"] = False
 
+            novo_alfabeto = list()
+
+            for a in self.alfabeto:
+                if a == "&":
+                    continue
+                novo_alfabeto.append(a)
+
             for e in estado_atual:
                 if e in self.estados_finais:
                     novo_estado["final"] = True
@@ -220,10 +227,7 @@ class Automato(object):
                     novo_estado["inicial"] = True
                     break
 
-            for simbolo in self.alfabeto:
-                if simbolo == "&":
-                    continue
-                
+            for simbolo in novo_alfabeto:
                 conjunto_estados = list()
                 for estado in estado_atual:
                     try:
@@ -257,15 +261,24 @@ class Automato(object):
             if nome_estado_atual not in novo_automato:
                 novo_automato[nome_estado_atual] = novo_estado
         
-        estados_renomeados = {}
-        for e in novo_automato:
-            estados_renomeados[e] = novo_automato[e]["order"]
         
         automato_renomeado = {}
         for e in novo_automato:
-            pass
+            estado_renomeado = {}
+            nome_estado = novo_automato[e]["order"]
+            estado_renomeado["final"] = novo_automato[e]["final"]
+            estado_renomeado["inicial"] = novo_automato[e]["inicial"]
 
-        return sorted(novo_automato.items(), key=lambda x: x[1]["order"])
+            for a in novo_alfabeto:
+                nome = nome_de_estado_lista(novo_automato[e][a])
+                novo_nome = novo_automato[nome]["order"]
+                estado_renomeado[a] = novo_nome
+            
+            automato_renomeado[nome_estado] = estado_renomeado
+        r = {}
+        r["alfabeto"] = novo_alfabeto
+        r["automato"] = sorted(automato_renomeado.items())
+        return r
         
 
 #defini base
