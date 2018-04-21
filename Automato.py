@@ -1,4 +1,6 @@
 
+from operator import itemgetter, attrgetter
+
 class SimboloNotExist(Exception):
     pass
 
@@ -176,9 +178,7 @@ class Automato(object):
                 transi_e = []
             
             for t in transi_e:
-                print("estado", t)
                 t_fechos = self.fecho_e(t)
-                print("tfecho", t_fechos)
                 for f in t_fechos:
                     if f not in fecho:
                         fecho.append(f)
@@ -189,7 +189,7 @@ class Automato(object):
         return self.fechos[estado]
     
     def afd_from_afn(self):
-        
+        total_estados = 0
         novo_automato = dict()
         lista_nome_estados = dict()
         lista_estados = list()
@@ -200,13 +200,25 @@ class Automato(object):
         lista_nome_estados[nome_fecho_e_inicial] = len(lista_estados) - 1
         
         while(len(lista_estados) > 0):
-            
+            final = False
             estado_atual = lista_estados.pop(0)
 
             nome_estado_atual = nome_de_estado_lista(estado_atual)
             lista_nome_estados.pop(nome_estado_atual)
 
-            novo_estado = {}
+            novo_estado = {}        
+            novo_estado["inicial"] = False
+            novo_estado["final"] = False
+
+            for e in estado_atual:
+                if e in self.estados_finais:
+                    novo_estado["final"] = True
+                    break
+            
+            for e in estado_atual:
+                if e == self.estado_inicial:
+                    novo_estado["inicial"] = True
+                    break
 
             for simbolo in self.alfabeto:
                 if simbolo == "&":
@@ -238,9 +250,22 @@ class Automato(object):
                     lista_estados.append(conjunto_estados)
                     lista_nome_estados[nome_conjunto_estados] = len(lista_estados) - 1
             
-            novo_automato[nome_estado_atual] = novo_estado
+            novo_estado["order"] = total_estados
+            
+            total_estados += 1
+            
+            if nome_estado_atual not in novo_automato:
+                novo_automato[nome_estado_atual] = novo_estado
+        
+        estados_renomeados = {}
+        for e in novo_automato:
+            estados_renomeados[e] = novo_automato[e]["order"]
+        
+        automato_renomeado = {}
+        for e in novo_automato:
+            pass
 
-        return novo_automato
+        return sorted(novo_automato.items(), key=lambda x: x[1]["order"])
         
 
 #defini base
