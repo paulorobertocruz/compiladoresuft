@@ -104,7 +104,7 @@ def first(A, V, T, P):
     FIRST[A] = conjunto
     return FIRST[A]
 
-def follow(A, V, T, P):
+def follow(A, V, T, P, S):
     global FIRST
     global FOLLOW
 
@@ -142,7 +142,7 @@ def follow(A, V, T, P):
 
                         if proximo_first and index == regra[1] and p != A:
                             proximo_first = False
-                            conjunto = uniao(conjunto, follow(p, V, T, P), ["$"])
+                            conjunto = uniao(conjunto, follow(p, V, T, P, S), ["$"])
                             follow_p_added = True
 
                         
@@ -152,11 +152,11 @@ def follow(A, V, T, P):
         if not follow_p_added and p != A:
             for regra in regras:
                 if A == P[p][regra[1]]:
-                    conjunto = uniao(conjunto, follow(p, V, T, P), ["$"])
+                    conjunto = uniao(conjunto, follow(p, V, T, P, S), ["$"])
                         
 
-
-    conjunto.append("$")
+    if A == S:
+        conjunto.append("$")
     FOLLOW[A] = conjunto
     return FOLLOW[A]
 
@@ -164,7 +164,7 @@ def follow(A, V, T, P):
 def first_follow():
     
     reset_ff()
-
+    S = "<E>"
     V = limpa_entrada(get_texto("LL1/V.txt").strip("\n"))
     T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
     P = limpa_p(get_texto("LL1/P.txt"))
@@ -179,7 +179,7 @@ def first_follow():
         first(v, V, T, P)
     
     for v in V:
-        follow(v, V, T, P)
+        follow(v, V, T, P, S)
     
     print("")
     print("*"*20)
