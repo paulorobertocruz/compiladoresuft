@@ -138,11 +138,11 @@ def follow(A, V, T, P, S):
                             proximo_first = True
                             first_index.remove("&")
 
-                        conjunto = uniao(conjunto, first_index, ["$"])
+                        conjunto = uniao(conjunto, first_index)
 
                         if proximo_first and index == regra[1] and p != A:
                             proximo_first = False
-                            conjunto = uniao(conjunto, follow(p, V, T, P, S), ["$"])
+                            conjunto = uniao(conjunto, follow(p, V, T, P, S))
                             follow_p_added = True
 
                         
@@ -152,11 +152,12 @@ def follow(A, V, T, P, S):
         if not follow_p_added and p != A:
             for regra in regras:
                 if A == P[p][regra[1]]:
-                    conjunto = uniao(conjunto, follow(p, V, T, P, S), ["$"])
+                    conjunto = uniao(conjunto, follow(p, V, T, P, S))
                         
 
-    if A == S:
+    if A == S and "$" not in conjunto:
         conjunto.append("$")
+    
     FOLLOW[A] = conjunto
     return FOLLOW[A]
 
