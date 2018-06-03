@@ -3,6 +3,7 @@ OPERANDOS = ["|"]
 OU = "|"
 FIRST = dict()
 FOLLOW = dict()
+TABELA_SINTATICA = dict()
 
 def get_texto(nome):
     contents = ""
@@ -14,8 +15,10 @@ def get_texto(nome):
 def reset_ff():
     global FIRST
     global FOLLOW
+    global TABELA_SINTATICA
     FIRST = dict()
     FOLLOW = dict()
+    TABELA_SINTATICA = dict()
 
 def uniao(a, b, exclude = []):
     for i in b:
@@ -27,6 +30,26 @@ def limpa_entrada(A):
     A = A.strip()
     A = A.replace("{", "").replace("}", "")
     B = A.split(",")
+    return B
+
+def regra_list(R):
+    B = list()
+    open_index = None
+    close_index = None
+    
+    for c in range(len(R)):
+
+        if R[c] in OPERANDOS or R[c] == "&":
+            B.append(R[c])
+        elif R[c] == "<":
+            open_index = c
+        elif R[c] == ">":
+            close_index = c
+        
+        if open_index is not None and close_index is not None:
+            B.append(R[open_index:close_index+1])
+            open_index = None
+            close_index = None
     return B
 
 def limpa_p(P):
@@ -180,7 +203,7 @@ def first_follow():
     for p in P:
         print(p, "->", P[p])
     print("S:", S)
-    
+
     for v in V:
         first(v, V, T, P)
     
@@ -205,13 +228,13 @@ def tabela_sintatica():
     T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
     P = limpa_p(get_texto("LL1/P.txt"))
     
-    tabela = dict()
+    global TABELA_SINTATICA
     
     for p in P:
-        tabela[p] = dict()
+        TABELA_SINTATICA[p] = dict()
         for t in T:
-            tabela[p][t] = None
-        tabela[p]["$"] = None
+            TABELA_SINTATICA[p][t] = None
+        TABELA_SINTATICA[p]["$"] = None
     
     for p in P:
         regras = get_regras(P[p])
@@ -223,12 +246,12 @@ def tabela_sintatica():
             print("RR:", r)
             #regra 1
             if P[p][regra[0]] in T:
-                tabela[p][P[p][regra[0]]] = r
+                TABELA_SINTATICA[p][P[p][regra[0]]] = r
             else:
                 #regra 2.i
                 if "&" not in f:
                     for a in f:
-                        tabela[p][a] = r
+                        TABELA_SINTATICA[p][a] = r
                 else:
                     first_all = first(P[p][regra[0]], V, T, P)
                     #regra 2.ii
@@ -238,17 +261,59 @@ def tabela_sintatica():
                         first_all.remove("&")
                     print("vazio b:", r, "fall:", first_all)
                     for a in first_all:
-                        tabela[p][a] = r
+                        TABELA_SINTATICA[p][a] = r
                     #regra 2.iii
                     if "$" in fw:
-                        tabela[p]["$"] = r
+                        TABELA_SINTATICA[p]["$"] = r
     print("*"*20)
-    print("Tabela")
-    for t in tabela:
-        print(t, tabela[t])
+    print("TABELA_SINTATICA")
+    for t in TABELA_SINTATICA:
+        print(t, TABELA_SINTATICA[t])
 
+from queue import LifoQueue
 
+def analisador_sintatico(sentenca):
+    
+    sentenca_list = regra_list(sentenca)
+    sentenca_list.append("$")
+
+    S = get_texto("LL1/S.txt").strip("\n")
+    V = limpa_entrada(get_texto("LL1/V.txt").strip("\n"))
+    T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
+    P = limpa_p(get_texto("LL1/P.txt"))
+
+    global TABELA_SINTATICA
+    
+    x = None
+    a = None
+    ss = "$"
+
+    pilha = LifoQueue()
+    pilha.put(ss)
+    pilha.put(S)
+
+    x = pilha.get()
+    a = sentenca_list.pop(0)
+    print(sentenca_list)
+    while True:
+        print("a-x:", a, x)
+        if a == x and x == ss:
+            print("sentenca reconhecida")
+            break
+        elif a == x:
+            print("aaaaa ==== xxxx")
+            x = pilha.get()
+            a = sentenca_list.pop(0)
+            print(sentenca_list)
+        else:
+            print("else")
+            regra = TABELA_SINTATICA[x][a]
+            pilha.put(x)
+            for r in reversed(regra):
+                pilha.put(r)
+            x = pilha.get()
 
 if __name__ == "__main__":
     first_follow()
     tabela_sintatica()
+    analisador_sintatico("<id><+><id><*><id>")
