@@ -306,21 +306,24 @@ def analisador_sintatico(sentenca):
     x = pilha.get()
     a = sentenca_list.pop(0)
     while True:
-
         if a == x and x == ss:
+            print("sentenca reconhecida")
             break
         elif a == x:
             x = pilha.get()
             a = sentenca_list.pop(0)
         else:
             regra = TABELA_SINTATICA[x][a]
-            for r in reversed(regra):
-                #em caso da regra seja vazio(&) remove topo
-                if r is not "&":
-                    pilha.put(r)
-            x = pilha.get()
+            if regra is None:
+                print("erro, break")
+                break
+            else:
+                for r in reversed(regra):
+                    if r is not "&":
+                        pilha.put(r)
+                x = pilha.get()
 
 if __name__ == "__main__":
     first_follow()
     tabela_sintatica()
-    analisador_sintatico("<id><+><id><*><id><+><id><+><id><*><id>")
+    analisador_sintatico("<id><+><id><*><id><+><id><+><id><id>")
