@@ -75,6 +75,10 @@ def get_regras(P):
     return r
 
 def first(A, V, T, P):
+    
+    if A not in V:
+        return ["&"]
+
     global FIRST
     
     if A in FIRST:
@@ -194,6 +198,56 @@ def first_follow():
     for f in FOLLOW:
         print(f, "=", FOLLOW[f])
 
+def tabela_sintatica():
+    S = "<E>"
+    V = limpa_entrada(get_texto("LL1/V.txt").strip("\n"))
+    T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
+    P = limpa_p(get_texto("LL1/P.txt"))
+    
+    tabela = dict()
+    
+    for p in P:
+        tabela[p] = dict()
+        for t in T:
+            tabela[p][t] = None
+        tabela[p]["$"] = None
+    
+    for p in P:
+        regras = get_regras(P[p])
+        for regra in regras:
+            f = first(p, V, T, P)
+            fw = follow(p, V, T, P, S)
+            # slice não inclui a ultima posição
+            r = P[p][regra[0]:regra[1]+1]
+            print("RR:", r)
+            #regra 1
+            if P[p][regra[0]] in T:
+                tabela[p][P[p][regra[0]]] = r
+            else:
+                #regra 2.i
+                if "&" not in f:
+                    for a in f:
+                        tabela[p][a] = r
+                else:
+                    first_all = first(P[p][regra[0]], V, T, P)
+                    #regra 2.ii
+                    print("vazio a:", r, "fall:", first_all)
+                    if "&" in first_all:
+                        first_all = uniao(first_all, fw)
+                        first_all.remove("&")
+                    print("vazio b:", r, "fall:", first_all)
+                    for a in first_all:
+                        tabela[p][a] = r
+                    #regra 2.iii
+                    if "$" in fw:
+                        tabela[p]["$"] = r
+    print("*"*20)
+    print("Tabela")
+    for t in tabela:
+        print(t, tabela[t])
+
+
 
 if __name__ == "__main__":
     first_follow()
+    tabela_sintatica()
