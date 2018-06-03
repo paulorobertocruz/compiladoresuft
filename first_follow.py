@@ -272,6 +272,17 @@ def tabela_sintatica():
 
 from queue import LifoQueue
 
+def print_q(q):
+    qq = LifoQueue()
+
+    while not q.empty():
+        x = q.get()
+        qq.put(x)
+        print(x)
+    
+    while not qq.empty():
+        q.put(qq.get())
+
 def analisador_sintatico(sentenca):
     
     sentenca_list = regra_list(sentenca)
@@ -294,26 +305,22 @@ def analisador_sintatico(sentenca):
 
     x = pilha.get()
     a = sentenca_list.pop(0)
-    print(sentenca_list)
     while True:
-        print("a-x:", a, x)
+
         if a == x and x == ss:
-            print("sentenca reconhecida")
             break
         elif a == x:
-            print("aaaaa ==== xxxx")
             x = pilha.get()
             a = sentenca_list.pop(0)
-            print(sentenca_list)
         else:
-            print("else")
             regra = TABELA_SINTATICA[x][a]
-            pilha.put(x)
             for r in reversed(regra):
-                pilha.put(r)
+                #em caso da regra seja vazio(&) remove topo
+                if r is not "&":
+                    pilha.put(r)
             x = pilha.get()
 
 if __name__ == "__main__":
     first_follow()
     tabela_sintatica()
-    analisador_sintatico("<id><+><id><*><id>")
+    analisador_sintatico("<id><+><id><*><id><+><id><+><id><*><id>")
