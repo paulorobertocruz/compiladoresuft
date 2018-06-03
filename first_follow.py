@@ -169,7 +169,7 @@ def follow(A, V, T, P, S):
 def first_follow():
     
     reset_ff()
-    S = "<E>"
+    S = get_texto("LL1/S.txt").strip("\n")
     V = limpa_entrada(get_texto("LL1/V.txt").strip("\n"))
     T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
     P = limpa_p(get_texto("LL1/P.txt"))
@@ -179,7 +179,8 @@ def first_follow():
     print("P:")
     for p in P:
         print(p, "->", P[p])
-
+    print("S:", S)
+    
     for v in V:
         first(v, V, T, P)
     
@@ -199,7 +200,7 @@ def first_follow():
         print(f, "=", FOLLOW[f])
 
 def tabela_sintatica():
-    S = "<E>"
+    S = get_texto("LL1/S.txt").strip("\n")
     V = limpa_entrada(get_texto("LL1/V.txt").strip("\n"))
     T = limpa_entrada(get_texto("LL1/T.txt").strip("\n"))
     P = limpa_p(get_texto("LL1/P.txt"))
